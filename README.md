@@ -1,4 +1,4 @@
-# supervise
+# :eyes: supervise
 
 a simple command line supervisor tool.
 
