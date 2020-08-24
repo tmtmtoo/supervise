@@ -13,4 +13,7 @@ Options:
   --help            display usage information
 ```
 
-_work in progress_
+## usage
+```sh
+$ supervice "echo abc" -c 2 -i 2
+```
