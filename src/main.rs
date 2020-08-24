@@ -30,6 +30,9 @@ mod prelude;
 
 #[tokio::main]
 async fn main() {
-    let executor = exec::TokioPipedCmdExecutor::new();
-    app::run(app::App::new(executor)).await
+    let config = argh::from_env();
+
+    let application = app::App::new(config);
+
+    app::run(application).await
 }
