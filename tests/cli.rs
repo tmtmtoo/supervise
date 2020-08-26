@@ -1,16 +1,30 @@
 use assert_cmd::Command;
 use predicates::prelude::*;
 
+#[cfg(not(target_os = "windows"))]
 #[test]
 fn echo_2_times() {
     let mut cmd = Command::cargo_bin("supervise").unwrap();
 
-    cmd.arg("echo aaa")
+    cmd.arg("echo abc")
         .arg("-c")
         .arg("2")
         .assert()
         .success()
-        .stdout(predicate::eq("aaa\naaa\n"));
+        .stdout(predicate::eq("abc\nabc\n"));
+}
+
+#[cfg(target_os = "windows")]
+#[test]
+fn echo_2_times() {
+    let mut cmd = Command::cargo_bin("supervise").unwrap();
+
+    cmd.arg("echo abc")
+        .arg("-c")
+        .arg("2")
+        .assert()
+        .success()
+        .stdout(predicate::eq("abc\r\nabc\r\n"));
 }
 
 #[test]
@@ -19,7 +33,7 @@ fn sleep_one_time() {
 
     let now = std::time::Instant::now();
 
-    cmd.arg("echo aaa")
+    cmd.arg("echo abc")
         .arg("-c")
         .arg("2")
         .arg("-i")
