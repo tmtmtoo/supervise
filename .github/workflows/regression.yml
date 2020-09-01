@@ -33,4 +33,4 @@ jobs:
           key: ${{ runner.os }}-cargo-toolchains-${{ hashFiles('**/rust-toolchain') }}
 
       - name: Run tests
-        run: cargo test
+        run: make test

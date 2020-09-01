@@ -1,6 +1,5 @@
 mod components;
 
-use crate::config::*;
 use crate::exec::*;
 use crate::prelude::*;
 use components::*;
@@ -33,17 +32,16 @@ pub struct App<E, S> {
     limit: Option<usize>,
 }
 
-impl App<SharedState<CmdExecutor>, SharedState<WaitSec>> {
-    pub fn new(config: Config) -> Self {
+impl App<SharedState<PrintableCmdNotFound<CmdExecutor>>, SharedState<WaitSec>> {
+    pub fn new(command: String, limit: Option<usize>, interval: f64) -> Self {
         let executor = Arc::new(TokioPipedCmdExecutor::new());
-        let command = config.command.to_owned();
-        let limit = config.count.clone();
 
         Self {
             state: AppState::ExecuteCommand(SharedState::new(
-                config,
+                command.to_owned(),
+                interval,
                 executor.clone(),
-                CmdExecutor::new(command, executor),
+                PrintableCmdNotFound::new(command.to_owned(), CmdExecutor::new(command, executor)),
             )),
             count: 0,
             limit,

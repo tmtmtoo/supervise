@@ -1,4 +1,3 @@
-use crate::config::*;
 use crate::exec::*;
 use crate::prelude::*;
 
@@ -18,6 +17,36 @@ impl super::Component for CmdExecutor {
     }
 }
 
+#[derive(new)]
+pub struct PrintableCmdNotFound<C> {
+    command: String,
+    inner: C,
+}
+
+#[async_trait]
+impl<T: 'static, C: super::Component<Output = Result<T>> + Send + Sync> super::Component
+    for PrintableCmdNotFound<C>
+{
+    type Output = Result<T>;
+
+    async fn handle(&self) -> Self::Output {
+        let result = self.inner.handle().await;
+
+        match &result {
+            Err(_) => {
+                if self.command.is_empty() {
+                    eprintln!("supervise: no command entered")
+                } else {
+                    eprintln!("supervise: command not found '{}'", self.command)
+                }
+            }
+            _ => (),
+        };
+
+        result
+    }
+}
+
 pub struct WaitSec {
     sec: f64,
 }
@@ -33,7 +62,8 @@ impl super::Component for WaitSec {
 
 #[derive(new)]
 pub struct SharedState<C> {
-    config: Config,
+    command: String,
+    interval: f64,
     executor: Arc<dyn PipedCmdExecutor>,
     inner: C,
 }
@@ -49,26 +79,31 @@ impl<T: 'static, C: super::Component<Output = T> + Send + Sync> super::Component
     }
 }
 
-impl From<SharedState<CmdExecutor>> for SharedState<WaitSec> {
-    fn from(state: SharedState<CmdExecutor>) -> Self {
+impl From<SharedState<PrintableCmdNotFound<CmdExecutor>>> for SharedState<WaitSec> {
+    fn from(state: SharedState<PrintableCmdNotFound<CmdExecutor>>) -> Self {
         Self {
             inner: WaitSec {
-                sec: state.config.interval,
+                sec: state.interval,
             },
-            config: state.config,
+            command: state.command,
+            interval: state.interval,
             executor: state.executor,
         }
     }
 }
 
-impl From<SharedState<WaitSec>> for SharedState<CmdExecutor> {
+impl From<SharedState<WaitSec>> for SharedState<PrintableCmdNotFound<CmdExecutor>> {
     fn from(state: SharedState<WaitSec>) -> Self {
         Self {
-            inner: CmdExecutor {
-                command: state.config.command.to_owned(),
-                executor: state.executor.clone(),
+            inner: PrintableCmdNotFound {
+                command: state.command.to_owned(),
+                inner: CmdExecutor {
+                    command: state.command.to_owned(),
+                    executor: state.executor.clone(),
+                },
             },
-            config: state.config,
+            command: state.command,
+            interval: state.interval,
             executor: state.executor,
         }
     }
