@@ -23,5 +23,5 @@ ARGS:
 ## example
 
 ```shell
-$ supervice -c 2 -i 2 -- echo abc
+$ supervise -c 2 -i 2 -- echo abc
 ```
