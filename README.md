@@ -3,17 +3,25 @@
 a simple command line supervisor tool.
 
 ```
-Usage: supervise <command> [-c <count>] [-i <interval>]
-
 Supervise command execution.
 
-Options:
-  -c, --count       maximum number of executions
-  -i, --interval    execution interval (sec)
-  --help            display usage information
+USAGE:
+    supervise [OPTIONS] [COMMAND]...
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+    -c, --count <count>          maximum number of executions
+    -i, --interval <interval>    execution interval (sec) [default: 0.1]
+
+ARGS:
+    <COMMAND>...    command and options
 ```
 
-## usage
-```sh
-$ supervice "echo abc" -c 2 -i 2
+## example
+
+```shell
+$ supervise -c 2 -i 2 -- echo abc
 ```
