@@ -1,6 +1,7 @@
 use assert_cmd::Command;
 use predicates::prelude::*;
 
+#[cfg(not(target_os = "windows"))]
 #[test]
 fn echo_2_times() {
     let mut cmd = Command::cargo_bin("supervise").unwrap();
@@ -10,13 +11,10 @@ fn echo_2_times() {
         .arg("2")
         .assert()
         .success()
-        .stdout(predicate::eq(
-            r"abc
-abc
-",
-        ));
+        .stdout(predicate::eq("abc\nabc\n"));
 }
 
+#[cfg(not(target_os = "windows"))]
 #[test]
 fn echo_2_times_with_double_dashes() {
     let mut cmd = Command::cargo_bin("supervise").unwrap();
@@ -27,11 +25,34 @@ fn echo_2_times_with_double_dashes() {
         .arg("echo abc")
         .assert()
         .success()
-        .stdout(predicate::eq(
-            r"abc
-abc
-",
-        ));
+        .stdout(predicate::eq("abc\nabc\n"));
+}
+
+#[cfg(target_os = "windows")]
+#[test]
+fn echo_2_times() {
+    let mut cmd = Command::cargo_bin("supervise").unwrap();
+
+    cmd.arg("echo abc")
+        .arg("-c")
+        .arg("2")
+        .assert()
+        .success()
+        .stdout(predicate::eq("abc\r\nabc\r\n"));
+}
+
+#[cfg(target_os = "windows")]
+#[test]
+fn echo_2_times_with_double_dashes() {
+    let mut cmd = Command::cargo_bin("supervise").unwrap();
+
+    cmd.arg("-c")
+        .arg("2")
+        .arg("--")
+        .arg("echo abc")
+        .assert()
+        .success()
+        .stdout(predicate::eq("abc\r\nabc\r\n"));
 }
 
 #[test]
