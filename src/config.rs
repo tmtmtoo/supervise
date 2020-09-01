@@ -1,17 +1,20 @@
-use argh::FromArgs;
+use structopt::clap::AppSettings;
+use structopt::StructOpt;
 
-#[derive(Debug, PartialEq, FromArgs, Getters)]
+#[derive(Debug, StructOpt, PartialEq)]
+#[structopt(author = "")]
+#[structopt(raw(setting = "AppSettings::AllowLeadingHyphen"))]
 /// Supervise command execution.
 pub struct Config {
-    /// command and options
-    #[argh(positional)]
-    pub command: String,
-
     /// maximum number of executions
-    #[argh(option, short = 'c')]
+    #[structopt(short, long)]
     pub count: Option<usize>,
 
     /// execution interval (sec)
-    #[argh(option, short = 'i', default = "0.0")]
+    #[structopt(short, long, default_value = "0.1")]
     pub interval: f64,
+
+    /// command and options
+    #[structopt(name = "COMMAND")]
+    pub command: Vec<String>,
 }

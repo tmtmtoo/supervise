@@ -30,9 +30,11 @@ mod prelude;
 
 #[tokio::main]
 async fn main() {
-    let config = argh::from_env();
+    use structopt::StructOpt;
 
-    let application = app::App::new(config);
+    let config = config::Config::from_args();
+
+    let application = app::App::new(config.command.join(" "), config.count, config.interval);
 
     app::run(application).await
 }
