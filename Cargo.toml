@@ -3,6 +3,16 @@ name = "supervise"
 version = "0.1.1"
 authors = ["tmtmtoo <tmtmt2209@gmail.com>"]
 edition = "2018"
+license = "MIT"
+description = "A simple command line supervisor tool."
+repository = "https://github.com/tmtmtoo/supervise"
+homepage = "https://github.com/tmtmtoo/supervise"
+readme = "README.md"
+categories = ["command-line-interface", "command-line-utilities"]
+keywords = ["process", "supervisor"]
+
+[badges]
+github = { repository = "tmtmtoo/supervise", workflow = "Rust" }
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
