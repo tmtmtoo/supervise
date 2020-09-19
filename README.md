@@ -1,3 +1,5 @@
+## This has been moved into the [cx](https://github.com/tmtmtoo/cx).
+
 # :eyes: supervise
 
 a simple command line supervisor tool.
